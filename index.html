@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Tap Target</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-top: 10px;
+      font-size: 28px;
+    }
+
+    .info {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 15px 0;
+      font-size: 18px;
+      flex-wrap: wrap;
+    }
+
+    #gameArea {
+      position: relative;
+      width: 100%;
+      max-width: 380px;
+      height: 500px;
+      margin: 20px auto;
+      background: rgba(255,255,255,0.15);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 18px;
+      overflow: hidden;
+      backdrop-filter: blur(6px);
+    }
+
+    #target {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      background: #ffcc00;
+      border-radius: 16px;
+      display: none;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+      transition: transform 0.1s;
+    }
+
+    #target:active {
+      transform: scale(0.95);
+    }
+
+    button {
+      background: #00d084;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      font-size: 18px;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      opacity: 0.95;
+    }
+
+    #message {
+      margin-top: 15px;
+      font-size: 18px;
+      min-height: 24px;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <h1>Game Tap Target</h1>
+  <p>Tekan kotak kuning secepat mungkin sebelum waktu habis!</p>
+
+  <div class="info">
+    <div>Skor: <span id="score">0</span></div>
+    <div>Waktu: <span id="time">30</span> detik</div>
+  </div>
+
+  <button id="startBtn">Mulai Game</button>
+
+  <div id="gameArea">
+    <div id="target"></div>
+  </div>
+
+  <div id="message"></div>
+
+  <div class="footer">
+    Dibuat dengan GitHub Pages dari HP Android
+  </div>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const target = document.getElementById("target");
+    const gameArea = document.getElementById("gameArea");
+    const scoreEl = document.getElementById("score");
+    const timeEl = document.getElementById("time");
+    const messageEl = document.getElementById("message");
+
+    let score = 0;
+    let timeLeft = 30;
+    let gameRunning = false;
+    let timer;
+
+    function moveTarget() {
+      const areaWidth = gameArea.clientWidth;
+      const areaHeight = gameArea.clientHeight;
+      const targetSize = target.clientWidth;
+
+      const maxX = areaWidth - targetSize;
+      const maxY = areaHeight - targetSize;
+
+      const x = Math.floor(Math.random() * maxX);
+      const y = Math.floor(Math.random() * maxY);
+
+      target.style.left = x + "px";
+      target.style.top = y + "px";
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = 30;
+      gameRunning = true;
+
+      scoreEl.textContent = score;
+      timeEl.textContent = timeLeft;
+      messageEl.textContent = "";
+      target.style.display = "block";
+
+      moveTarget();
+
+      clearInterval(timer);
+      timer = setInterval(() => {
+        timeLeft--;
+        timeEl.textContent = timeLeft;
+
+        if (timeLeft <= 0) {
+          endGame();
+        }
+      }, 1000);
+    }
+
+    function endGame() {
+      gameRunning = false;
+      clearInterval(timer);
+      target.style.display = "none";
+      messageEl.textContent = "Game selesai! Skor kamu: " + score;
+    }
+
+    target.addEventListener("click", () => {
+      if (!gameRunning) return;
+      score++;
+      scoreEl.textContent = score;
+      moveTarget();
+    });
+
+    startBtn.addEventListener("click", startGame);
+  </script>
+</body>
+    </html>
